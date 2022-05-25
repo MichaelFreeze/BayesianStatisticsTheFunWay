@@ -1,0 +1,262 @@
+---
+title: "Baysian Statistics the Fun Way - Will Kurt"
+author: "Michael Freeze"
+date: "4/27/2022"
+output: html_document
+---
+
+---
+title: "Binomial Distribution"
+author: "Michael Freeze"
+date: "4/27/2022"
+output: html_document
+---
+
+```{r}
+library(magrittr)
+library(ggplot2)
+```
+
+
+# Binomial Distribution Notes and Exercises
+Based on Bayesian Statistics the Fun Way by Will Kurt
+
+### Structure of a Binomial Distribution
+The distribution you'll learn about here is the binomial distribution, used to 
+calculate the probability of a certain number of successful outcomes, given a 
+number of trials and the probability of the successful outcome.
+
+Example problems that follow a binomial distribution include the probability of:
+
+* Flipping two heads in three coin tosses
+
+* Buying 1 million lottery tickets and winning at least once
+
+* Rolling fewer than three 20s in 10 rolls of a 20-sided die
+
+Each of these problems shares a similar structure. Indeed, all binomial 
+distributions involve three *parameters*:
+
+* $k$ the number of outcomes we care about (Successes)
+
+* $n$ the total number of trials
+
+* $p$ the probability of the event happening
+
+The shorthand notation to express this distribution looks like this"
+$B(k;n,p)$
+
+For the example of the three coin tosses, we would write $B(2; 3,\frac{1}{2})$.
+Notice that the $k$ is separated from the other parameters by a semicolon.
+This is because when we are talking about a distribution of values, we usually 
+care about all values of $k$ for a fixed $n$ and $p$.  So, $B(k;n,p)$ denotes 
+each value in our distribution, but the entire distribution is usually referred
+to by simply $B(n,p)$
+
+
+### Combinatorics: Advanced Counting with the Binomial Coefficient
+There is a special operation in combinatorics, called the *binomial coefficient*,
+that represents counting the number of ways we can select $k$
+from $n$ - that is, selecting the outcomes we care about from the total number
+of trials. The notation for the binomial coefficient looks like this:
+
+$\binom{n}{k}$
+
+We read that expression as "$n$ choose $k$".  So, for our example, we would
+represent "in three tosses choose two heads" as:
+
+$\binom{3}{2}$
+
+The definition of this operation is:
+
+$\binom{n}{k} = \frac{n!}{k!(n-k)!}$
+
+The $!$ means *factorial*, which is the product of all the numbers up to and 
+including the number before the $!$ symbol, so $3! = (3 * 2 * 1)$
+
+Most mathematical programming languages indicate the binomial coefficient using 
+the `choose()` function. For example, with the mathematical language R, we would 
+compute the binomial coefficient for the case of flipping two heads in three 
+tosses with the following call:
+```{r}
+choose(3,2)
+```
+
+
+### Calculating the Probability of the Desired Outcome
+Let's look at the probability of getting two heads in five coin tosses
+
+For $B(2; 5, \frac{1}{2})$, we would say $\binom{5}{2}\frac{1}{2}^{2}(1-\frac{1}{2})^{3}$
+
+Generalizing this formula results in:
+
+$B(k;n, p)$ = $\binom{n}{k}p^{k}(1-p)^{n-k}$
+
+So, Using this generalization, we could calculate the probability of flipping $k$
+heads in $n$ flips of a coin.
+
+For example, the probability of flipping 12 heads in 24 coin tosses would be:
+
+$B(12;24, \frac{1}{2})$ = $\binom{24}{12}\frac{1}{2}^{12}(1-\frac{1}{2})^{12}$
+
+This formula, which is the basis of the binomial distribution, is called the
+*Probability Mass Function*.  The *mass* part of the name comes from the fact 
+that we can use it to calculate the amount of probability for *any* given $k$
+using a *fixed* $n$ and $p$, so this is the mass of our probability.
+
+For example, we can plug all the possible values for $k$ in 10 coin tosses into
+our PMF and visualize what the binomial distribution looks like for all possible 
+values, like so:
+
+
+```{r}
+dbinom(seq(from = 0, to = 10,  by = 1), 10, .5) %>% 
+  barplot(names.arg = c(0,1,2,3,4,5,6,7,8,9,10),
+          xlab = 'k',
+          ylab = 'B(k; 10, 1/2)',
+          main = 'Binomial Distribution for 10 Coin Flips')
+```
+
+We can do the same thing for the probability of getting a 6 when rolling a six sided die 10 times
+```{r}
+dbinom(seq(from = 0, to = 10,  by = 1), 10, .167) %>% 
+  barplot(names.arg = c(0,1,2,3,4,5,6,7,8,9,10),
+          xlab = 'k',
+          ylab = 'B(k; 10, 1/6)',
+          main = 'Binomial Distribution for 10 rolls of a fair die')
+```
+
+
+
+### Example: Gacha Games
+Gacha games are a genre of mobile games, particularly popular in Japan, in which 
+players are able to purchase virtual cards with in-game currency.  The catch is 
+that all cards are given at random, o when players purchase cards they can't 
+choose which ones they receive.  Since not all cards are equally desirable, 
+players are encouraged to keep pulling cards from the stack until they hit the 
+one they want, in a fashion similar to a slot machine.  We'll see how the 
+binomial distribution can help us to decide to take a particular risk in an 
+imaginary Gacha game.  
+
+Here's the scenario.  You have a new game called Bayesian Battlers.  The current 
+set of cards you can pull from is called a banner. The banner contains some 
+average cards and some featured cards that are more valuable.  As you may 
+suspect all of th ecards in Bayesian Battlers are famous probabilists and 
+statisticians.  The top cards in this banner are as follows, each with its 
+respective probability of being pulled:
+
+* Thomas Bayes: 0.721%
+
+* E.T. Jaynes: 0.720%
+
+* Harold Jeffreys: 0.718%
+
+* Andrew Gelman: 0.718%
+
+* John Kruschke: 0.714%
+
+These featured cards account for only .03591 of the total probability.  Since 
+probability must sum to 1, the chance of pulling the less desirable cards is the 
+other 0.96409.  Additionally, we treat the pile of cards that we pull from as 
+effectively infinite, meaning that pulling a specific card does not change the 
+probability of getting any other card - the card you pull here does not then 
+disappear from the pile.  This is different than if you were to pull a physical 
+card from a single deck of cards without shuffling the card back in. 
+
+You really want the E.T.Jaynes card to complete your elite Bayesian team.  
+Unfortunately, you have to purchase the in-game currency, Bayes Bucks, in order 
+to pull cards.   It costs one Bayes Buck to pull one card, but there's a special 
+on right now allowing you to purchase 100 bayes bucks from only $10.  That's the 
+maximum you're willing to spend on this game, and *only* if the probability of 
+getting that awesome E.T. Jaynes card is greater than or equal to 0.5.  
+
+
+Of course, we can plug our probability of getting the E.T.Jaynes card into our 
+formula for the binomial distribution to see what we would get:
+
+For $B(1; 100, 0.00721)$, we would say:  $\binom{100}{1}0.00271^{1}(1-0.00721)^{99}$,
+
+or:
+
+```{r}
+dbinom(1, 100, .00721) 
+```
+
+Our result is less than 0.5 so we should give up.  But wait, we forgot something
+very important.  In the preceding formula we calculated only the probability of 
+getting *exactly one* E.T.Jaynes card. But what if we pulled two or three or 
+more?  What we really want to know is the probability of getting *at least* or, 
+said differently, *one or more*.  We could writet this out as:
+
+$\binom{100}{1}0.00271^{1}(1-0.00721)^{99} + \binom{100}{2}0.00271^{2}(1-0.00721)^{98} + \binom{100}{3}0.00271^{3}(1-0.00721)^{97} ...$
+
+and so on, for the 100 cards you can pull with your Bayes Bucks. But, this gets
+really tedious.  So, instead, we use the special mathematical notion $\Sigma$:
+
+$\sum_{x = k}^{n}\binom{n}{k}p^{k}(1-p)^{n-k}$
+
+or, for our situation:
+
+$\sum_{x = k}^{100}\binom{100}{k}0.00721^{k}(1-0.00721)^{100-k}$
+
+We've made the problem simpler but, rather than pulling out a calculator, we
+will use `pbinom()` to automatically sum up all these values for $k$ in our PMF.
+
+
+`pbinom()` takes three required arguments $(k,n,p)$ and an optional fourth argument called 
+`lower.tail` (which defaults to `TRUE`).  When the fourth argument is `TRUE`, it 
+sums up the all of the probabilities less than or equal to the first argument. When 
+`lower.tail` is `FALSE` it sums up the probabilities greater than our $k$. 
+Consider the following example:
+
+
+If we wanted to know the probability of pulling at least one E.T. Jaynes card, 
+we would use
+
+```{r}
+pbinom(0, 100, .00720, lower.tail = FALSE)
+```
+
+So, even though the probability of getting exactly one E.T. Jaynes card is only 0.352
+(35%), the probability of pulling at least one is is high enough to risk it. 
+
+## Book Exercises
+
+### Question 1
+What are the parameters of the binomial distribution for the probability of 
+rolling either a 1 or a 20 on a 20-sided die, if we roll the die 12 times?
+
+
+### Question 2
+There are four aces in a deck of 52 cards.  If you pull a card, return the card, 
+then reshuffle and pull a card again, how many ways can you pull just one ace in 
+five pulls?
+ 
+### Question 3
+For the example in Question 2, what is the probability of pulling five aces in 10
+pulls (remember that the card is shuffled back into the deck when it is pulled)?
+
+## Book Answers
+
+### Answer 1
+$B(1; 12, \frac{1}{10})$
+
+### Answer 2
+We could say $\binom{n}{k}$ or calculate it using:
+```{r}
+choose(5, 1)
+```
+
+### Answer 3
+There are four aces in a deck of 52 cards and $\frac{4}{52} = \frac{1}{13}$
+
+So, pulling exactly one ace out of five pulls would be represented by 
+
+For $B(5; 10, \frac{1}{13})$, we would say:  $\binom{10}{5}\frac{1}{13}^{5}(1-\frac{1}{13})^{5}$ 
+
+and calculated with
+
+```{r}
+dbinom(5, 10, 0.07692308)
+```
+
