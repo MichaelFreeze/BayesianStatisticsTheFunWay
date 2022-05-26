@@ -131,7 +131,7 @@ dbinom(seq(from = 0, to = 10,  by = 1), 10, .167) %>%
 ### Example: Gacha Games
 Gacha games are a genre of mobile games, particularly popular in Japan, in which 
 players are able to purchase virtual cards with in-game currency.  The catch is 
-that all cards are given at random, o when players purchase cards they can't 
+that all cards are given at random. When players purchase cards they can't 
 choose which ones they receive.  Since not all cards are equally desirable, 
 players are encouraged to keep pulling cards from the stack until they hit the 
 one they want, in a fashion similar to a slot machine.  We'll see how the 
@@ -163,15 +163,15 @@ probability of getting any other card - the card you pull here does not then
 disappear from the pile.  This is different than if you were to pull a physical 
 card from a single deck of cards without shuffling the card back in. 
 
-You really want the E.T.Jaynes card to complete your elite Bayesian team.  
+You really want the E.T. Jaynes card to complete your elite Bayesian team.  
 Unfortunately, you have to purchase the in-game currency, Bayes Bucks, in order 
 to pull cards.   It costs one Bayes Buck to pull one card, but there's a special 
-on right now allowing you to purchase 100 bayes bucks from only $10.  That's the 
+on right now allowing you to purchase 100 Bayes bucks from only $10.  That's the 
 maximum you're willing to spend on this game, and *only* if the probability of 
 getting that awesome E.T. Jaynes card is greater than or equal to 0.5.  
 
 
-Of course, we can plug our probability of getting the E.T.Jaynes card into our 
+Of course, we can plug our probability of getting the E.T. Jaynes card into our 
 formula for the binomial distribution to see what we would get:
 
 For $B(1; 100, 0.00721)$, we would say:  $\binom{100}{1}0.00271^{1}(1-0.00721)^{99}$,
@@ -217,8 +217,9 @@ we would use
 pbinom(0, 100, .00720, lower.tail = FALSE)
 ```
 
-So, even though the probability of getting exactly one E.T. Jaynes card is only 0.352
-(35%), the probability of pulling at least one is is high enough to risk it. 
+So, even though the probability of getting exactly one E.T. Jaynes card is only 
+0.352 (35%), the probability of pulling at least one is is high enough to risk 
+it. 
 
 ## Book Exercises
 
@@ -235,6 +236,22 @@ five pulls?
 ### Question 3
 For the example in Question 2, what is the probability of pulling five aces in 10
 pulls (remember that the card is shuffled back into the deck when it is pulled)?
+
+### Question 4
+When you're searching for a new job, it's always helpful to have more than one 
+offer on the table so you can use it in negotiations. If you have a 1/5 
+probability of receiving a job offer when you interview, and you interview with 
+seven companies in a month, what is the probability you'll have at least two 
+competing offers by the end of that month?
+
+### Question 5
+You get a bunch of recruiter emails and find out you have 25 interviews lined up 
+in the next month.  Unfortunately, you know this will leave you exhausted, and 
+the probability of getting an offer will drop to 1/10 if you're tired.  You 
+really don't want to go on this many interviews unless you are at least twice 
+as likely to get at least two competing offers. Are you more likely to get at 
+least two offers if you go for 25 interviews, or stick to just 7?
+
 
 ## Book Answers
 
@@ -260,3 +277,27 @@ and calculated with
 dbinom(5, 10, 0.07692308)
 ```
 
+### Answer 4
+```{r}
+pbinom(1, 7, 1/5, lower.tail = FALSE)
+```
+
+### Answer 5
+We can carry the answer from question 4 into our answer here to remind us of the 
+probability of getting at least two offers after going on 7 interviews and having
+a 1/5 chance of getting an offer. 
+
+```{r}
+two_of_seven <- pbinom(1, 7, 1/5, lower.tail = FALSE)
+```
+
+```{r}
+two_of_twnty_five <- pbinom(1, 25, 1/10, lower.tail = FALSE)
+```
+
+Now we divide two_of_twnty_five by two_of_seven to see if it is at least twice as large.  If so, we will go on all of the interviews, if not, we will stick with the seven we have lined up. 
+
+```{r}
+two_of_twnty_five / two_of_seven
+```
+Since we're not at least twice as likely to get two competing offers by going on 25 interviews, we should stick with the 7 interviews. 

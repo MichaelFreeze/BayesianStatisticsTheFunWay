@@ -472,18 +472,31 @@ Unfortunately, you have to purchase the in-game currency, Bayes Bucks, in order 
 <h3>Question 2</h3>
 <p>There are four aces in a deck of 52 cards. If you pull a card, return the card, then reshuffle and pull a card again, how many ways can you pull just one ace in five pulls?</p>
 </div>
+<div id="question-3" class="section level3">
+<h3>Question 3</h3>
+<p>For the example in Question 2, what is the probability of pulling five aces in 10 pulls (remember that the card is shuffled back into the deck when it is pulled)?</p>
+</div>
 </div>
 <div id="book-answers" class="section level2">
 <h2>Book Answers</h2>
-<div id="question-1-1" class="section level3">
-<h3>Question 1</h3>
+<div id="answer-1" class="section level3">
+<h3>Answer 1</h3>
 <p><span class="math inline">\(B(1; 12, \frac{1}{10})\)</span></p>
 </div>
-<div id="question-2-1" class="section level3">
-<h3>Question 2</h3>
+<div id="answer-2" class="section level3">
+<h3>Answer 2</h3>
+<p>We could say <span class="math inline">\(\binom{n}{k}\)</span> or calculate it using:</p>
+<pre class="r"><code>choose(5, 1)</code></pre>
+<pre><code>## [1] 5</code></pre>
+</div>
+<div id="answer-3" class="section level3">
+<h3>Answer 3</h3>
 <p>There are four aces in a deck of 52 cards and <span class="math inline">\(\frac{4}{52} = \frac{1}{13}\)</span></p>
 <p>So, pulling exactly one ace out of five pulls would be represented by</p>
-<p>For <span class="math inline">\(B(1; 5, \frac{1}{13})\)</span>, we would say: <span class="math inline">\(\binom{5}{1}\frac{1}{13}^{1}(1-\frac{1}{13})^{4}\)</span>,</p>
+<p>For <span class="math inline">\(B(5; 10, \frac{1}{13})\)</span>, we would say: <span class="math inline">\(\binom{10}{5}\frac{1}{13}^{5}(1-\frac{1}{13})^{5}\)</span></p>
+<p>and calculated with</p>
+<pre class="r"><code>dbinom(5, 10, 0.07692308)</code></pre>
+<pre><code>## [1] 0.0004548554</code></pre>
 </div>
 </div>
 </div>
